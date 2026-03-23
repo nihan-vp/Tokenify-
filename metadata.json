@@ -1,0 +1,5 @@
+{
+  "name": "Clinic Token Management System",
+  "description": "A multi-clinic real-time token queue management system with public display and voice announcements.",
+  "requestFramePermissions": []
+}

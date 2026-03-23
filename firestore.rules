@@ -1,0 +1,52 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // ===============================================================
+    // Helper Functions
+    // ===============================================================
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    function isAdmin() {
+      return isAuthenticated() && (
+        (exists(/databases/$(database)/documents/users/$(request.auth.uid)) && 
+         get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin') ||
+        (request.auth.token.email == "qwerty311980@gmail.com" && request.auth.token.email_verified == true)
+      );
+    }
+
+    // ===============================================================
+    // Rules
+    // ===============================================================
+
+    match /users/{userId} {
+      allow read, write: if isOwner(userId) || isAdmin();
+    }
+
+    // Explicitly allow listing the clinics collection
+    match /clinics {
+      allow read, list: if true;
+    }
+
+    match /clinics/{clinicId} {
+      allow read, get: if true;
+      allow create: if isAuthenticated();
+      allow update: if isAuthenticated() && (
+        resource.data.ownerId == request.auth.uid || isAdmin()
+      );
+
+      match /{allSubcollections=**} {
+        allow read, get, list: if true;
+        allow write: if isAuthenticated() && (
+          get(/databases/$(database)/documents/clinics/$(clinicId)).data.ownerId == request.auth.uid ||
+          isAdmin()
+        );
+      }
+    }
+  }
+}

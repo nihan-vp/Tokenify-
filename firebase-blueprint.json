@@ -1,0 +1,67 @@
+{
+  "entities": {
+    "Clinic": {
+      "title": "Clinic",
+      "description": "Information about a clinic",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "ownerId": { "type": "string" },
+        "displayCode": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["name", "ownerId", "displayCode", "createdAt"]
+    },
+    "User": {
+      "title": "User",
+      "description": "User profile linking to a clinic",
+      "type": "object",
+      "properties": {
+        "email": { "type": "string" },
+        "clinicId": { "type": "string" }
+      },
+      "required": ["email", "clinicId"]
+    },
+    "TokenMeta": {
+      "title": "TokenMeta",
+      "description": "Current and last token numbers",
+      "type": "object",
+      "properties": {
+        "currentToken": { "type": "integer" },
+        "lastToken": { "type": "integer" }
+      },
+      "required": ["currentToken", "lastToken"]
+    },
+    "Settings": {
+      "title": "Settings",
+      "description": "Clinic display settings",
+      "type": "object",
+      "properties": {
+        "bgColor": { "type": "string" },
+        "textColor": { "type": "string" },
+        "fontSize": { "type": "string" },
+        "voiceEnabled": { "type": "boolean" },
+        "language": { "type": "string", "enum": ["en-IN", "ml-IN"] }
+      },
+      "required": ["bgColor", "textColor", "fontSize", "voiceEnabled", "language"]
+    }
+  },
+  "firestore": {
+    "/clinics/{clinicId}": {
+      "schema": "Clinic",
+      "description": "Clinic document"
+    },
+    "/clinics/{clinicId}/meta/tokens": {
+      "schema": "TokenMeta",
+      "description": "Token metadata"
+    },
+    "/clinics/{clinicId}/settings/display": {
+      "schema": "Settings",
+      "description": "Display settings"
+    },
+    "/users/{userId}": {
+      "schema": "User",
+      "description": "User profile"
+    }
+  }
+}
